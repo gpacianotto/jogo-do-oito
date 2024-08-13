@@ -2,23 +2,24 @@ import flet as ft
 
 
 class Peca:
-    def __init__(self, value : int, tabuleiro ):
+    def __init__(self, value : int, onClick):
         self.value = value
+        self.onClick = onClick
         if value != 9:
             self.content = str(value)
         else :
             self.content = ""
-        self.tabuleiro = tabuleiro
 
     def isNine(self) -> bool:
         if self.value == 9:
             return True
         return False
-                
-    def on_click(self, e):
-        self.tabuleiro.move(self.value)
+
+    def move(self, e):
+        self.onClick(self.value)
 
     def render(self):
+        from utils import instance_manager as im
         
         container = ft.Container(
             content=ft.Text(self.content, color=ft.colors.BLACK),
@@ -33,7 +34,7 @@ class Peca:
                 left=ft.BorderSide(width=1, color=ft.colors.BLACK),
                 right=ft.BorderSide(width=1, color=ft.colors.BLACK)
             ),
-            on_click=self.on_click
+            on_click=self.move
         )
 
         if self.isNine():
