@@ -2,9 +2,10 @@ import flet as ft
 
 
 class Peca:
-    def __init__(self, value : int, onClick):
+    def __init__(self, value : int, onClick, page:ft.Page):
         self.value = value
         self.onClick = onClick
+        self.page = page
         if value != 9:
             self.content = str(value)
         else :
@@ -16,7 +17,9 @@ class Peca:
         return False
 
     def move(self, e):
-        self.onClick(self.value)
+        loading = self.page.session.get("loading")
+        if loading == False:
+            self.onClick(self.value)
 
     def render(self):
         from utils import instance_manager as im
@@ -34,10 +37,10 @@ class Peca:
                 left=ft.BorderSide(width=1, color=ft.colors.BLACK),
                 right=ft.BorderSide(width=1, color=ft.colors.BLACK)
             ),
-            on_click=self.move
+            on_click=self.move,
         )
 
         if self.isNine():
-          container.visible = False  
+            return ft.Container()
 
         return container

@@ -7,25 +7,45 @@ class Tabuleiro():
 
     def __init__(self, page:ft.Page):
         self.pecas = [
-            [peca.Peca(1, self.move), peca.Peca(2, self.move), peca.Peca(3, self.move)],
-            [peca.Peca(4, self.move), peca.Peca(5, self.move), peca.Peca(6, self.move)],
-            [peca.Peca(7, self.move), peca.Peca(8, self.move), peca.Peca(9, self.move)],
+            [peca.Peca(1, self.move, page), peca.Peca(2, self.move, page), peca.Peca(3, self.move, page)],
+            [peca.Peca(4, self.move, page), peca.Peca(5, self.move, page), peca.Peca(6, self.move, page)],
+            [peca.Peca(7, self.move, page), peca.Peca(8, self.move, page), peca.Peca(9, self.move, page)],
         ]
         self.page = page
-        self.container = ft.Container(
-            content=ft.Column(self.renderPecas(), spacing=10),
-            bgcolor=ft.colors.ORANGE_ACCENT_100,
-            border_radius=20,
-            alignment=ft.alignment.center,
-            padding=10
+        self.data_table = ft.DataTable(
+            columns=[
+                ft.DataColumn(ft.Text("")),
+                ft.DataColumn(ft.Text("")),
+                ft.DataColumn(ft.Text(""))
+            ],
+            rows=self.render_pecas(),
+            divider_thickness=0,
+            horizontal_lines=ft.BorderSide(width=0),
+            
         )
     
+    def getMovablePecas(self) -> list[peca.Peca]:
+
+        result = []
+
+        for rows in self.pecas:
+            for peca in rows:
+                distance_to_nine = self.getDistanceToNine(peca.value)
+                if distance_to_nine == 1:
+                    result.append(peca)
+
+        return result
+
+    def getDistanceToNine(self, index:int):
+        i, j, i9, j9 = self.findPecaIndexAndNine(index)
+
+        return self.calculateDistance(i=i, j=j, i2=i9, j2=j9)
+
     def findPecaIndex(self, index:int):
         matrix = self.pecas
         for i in range(len(matrix)):
             for j in range(len(matrix[i])):
                 if matrix[i][j].value == index:
-                    print("value = " + str(index) + " i: "+ str(i) + " j: "+str(j))
                     return i, j
     
     def printPecasValue(self):
@@ -44,11 +64,9 @@ class Tabuleiro():
         return i, j, i9, j9
 
     def isMovable(self, index:int):
-        i, j, i9, j9 = self.findPecaIndexAndNine(index)
+        
 
-        distance_to_nine = self.calculateDistance(i=i, j=j, i2=i9, j2=j9)
-
-        print("distance to nine = " + str(distance_to_nine))
+        distance_to_nine = self.getDistanceToNine(index=index)
 
         if distance_to_nine > 1 :
             return False
@@ -63,9 +81,8 @@ class Tabuleiro():
         pecas = self.pecas
 
         aux = pecas[i][j]
-        aux2 = pecas[i9][j9]
 
-        pecas[i][j] = aux2
+        pecas[i][j] = pecas[i9][j9]
         pecas[i9][j9] = aux
 
         self.pecas = pecas
@@ -74,39 +91,40 @@ class Tabuleiro():
     def move(self, index:int):
         
         if self.isMovable(index=index) :
-            print("moving "+str(index))
             i, j, i9, j9 = self.findPecaIndexAndNine(index)
             self.swapPecas(i=i, j=j, i9=i9, j9=j9)
-            print(str(index) + " swapped, rendering...")
-            # self.printPecasValue()
-            # self.reRender()
+            self.reRender()
         return
-
-    def renderPecas(self):
+    
+    def render_pecas(self):
         return [
-            ft.Row([
-                self.pecas[0][0].render(),
-                self.pecas[0][1].render(),
-                self.pecas[0][2].render(),
-            ], spacing=10),
-            ft.Row([
-                self.pecas[1][0].render(),
-                self.pecas[1][1].render(),
-                self.pecas[1][2].render(),
-            ], spacing=10),
-            ft.Row([
-                self.pecas[2][0].render(),
-                self.pecas[2][1].render(),
-                self.pecas[2][2].render(),
-            ], spacing=10),
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(self.pecas[0][0].render()),
+                    ft.DataCell(self.pecas[0][1].render()),
+                    ft.DataCell(self.pecas[0][2].render()),
+                ]
+            ),
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(self.pecas[1][0].render()),
+                    ft.DataCell(self.pecas[1][1].render()),
+                    ft.DataCell(self.pecas[1][2].render()),
+                ]
+            ),
+            ft.DataRow(
+                cells=[
+                    ft.DataCell(self.pecas[2][0].render()),
+                    ft.DataCell(self.pecas[2][1].render()),
+                    ft.DataCell(self.pecas[2][2].render()),
+                ]
+            ),
         ]
     
 
-    def reRender(self, e):
+    def reRender(self, e=""):
         self.printPecasValue()
-        print(self.__class__.__text_signature__)
-        self.container.content.clean()
-        self.container.content = ft.Column(self.renderPecas(), spacing=10)
+        self.data_table.rows = self.render_pecas()
         ft.Page.update(self.page)
         return
 
@@ -114,8 +132,7 @@ class Tabuleiro():
         self.page.add(
             ft.Row(
                 [
-                    self.container,
-                    ft.TextButton("render again", on_click=self.reRender)
+                    self.data_table
                 ],
                 alignment=ft.MainAxisAlignment.CENTER,
             )
