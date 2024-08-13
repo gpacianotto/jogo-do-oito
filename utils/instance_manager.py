@@ -1,6 +1,9 @@
 
 
 class InstanceManager:
+
+    # essa classe pode ser útil no futuro para salvar estados globais
+
     _instance = None
     _state = {}
 
@@ -24,9 +27,3 @@ class InstanceManager:
     def __str__(self):
         return f"StateManager(state={self._state})"
 
-# Example usage:
-# state_manager = StateManager()
-# state_manager.set_state('user', 'Alice')
-# print(state_manager.get_state('user'))
-# state_manager.reset_state()
-# print(state_manager)
