@@ -32,6 +32,8 @@ class TabEmbaralhar:
         self.page.session.set("loading", True)
         self.button.disabled = True
 
+        refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
+
         for i in range(int(self.slider.value)):
 
             pecas = self.tabuleiro.getMovablePecas()
@@ -42,7 +44,7 @@ class TabEmbaralhar:
 
             self.tabuleiro.move(peca.value)
 
-            time.sleep(0.5)
+            time.sleep(refresh_time)
         
         self.page.session.set("loading", False)
         self.button.disabled = False

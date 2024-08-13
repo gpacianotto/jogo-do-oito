@@ -8,6 +8,7 @@ def main(page: ft.Page):
     page.window.width = 500
     page.window.height = 500
     page.session.set("loading", False)
+    page.session.set("config_refresh_time", 500)
 
     tb = tabuleiro.Tabuleiro(page=page)
     pc = painel_controle.PainelControle(page=page, tb=tb)
