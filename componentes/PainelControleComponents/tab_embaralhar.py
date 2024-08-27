@@ -9,14 +9,20 @@ class TabEmbaralhar:
         self.slider = ft.Slider(value=20, min=10,scale=1.2, max=100, on_change=self.on_change )
         self.text_slider = ft.Text(f"{self.slider.value} passos")
         self.button = ft.TextButton(content=ft.Text("Embaralhar"), on_click=self.shuffle)
+        self.noRepeatCheckBox = ft.Checkbox(
+            "Não repetir passo anterior",
+            value=False
+        )
 
         self.content = ft.Column([
             ft.Text("Embaralhe o Jogo:"),
             ft.Row([
                 self.slider,
                 self.text_slider,
-                self.button
-            ], alignment="center")
+                
+            ], alignment="center"),
+            self.noRepeatCheckBox,
+            self.button
         ], horizontal_alignment="center", alignment=ft.MainAxisAlignment.SPACE_AROUND)
 
         self.to_be_rendered = ft.Tab(
@@ -31,6 +37,8 @@ class TabEmbaralhar:
     def shuffle(self, e):
         self.page.session.set("loading", True)
         self.button.disabled = True
+        prevent_previous_step = self.noRepeatCheckBox.value
+        previous_step = 0
 
         refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
 
@@ -39,10 +47,17 @@ class TabEmbaralhar:
             pecas = self.tabuleiro.getMovablePecas()
 
             peca = random.choice(pecas)
+
+            if prevent_previous_step:
+                while peca.value == previous_step:
+                    peca = random.choice(pecas)
             
             print("Step " + str(i) +" - peca taken: " + str(peca.value))
 
             self.tabuleiro.move(peca.value)
+
+            if prevent_previous_step:
+                previous_step = peca.value
 
             time.sleep(refresh_time)
         
