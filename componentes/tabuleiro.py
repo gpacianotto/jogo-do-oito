@@ -20,7 +20,8 @@ class Tabuleiro():
             ],
             rows=self.render_pecas(),
             divider_thickness=0,
-            horizontal_lines=ft.BorderSide(width=0),
+            horizontal_lines=ft.BorderSide(width=20, color=ft.colors.BACKGROUND),
+            data_row_max_height=100,
             
         )
     
@@ -48,13 +49,22 @@ class Tabuleiro():
                 if matrix[i][j].value == index:
                     return i, j
     
-    def printPecasValue(self):
-        pecasValue = [
+    def getWinnerPosition(self):
+        return [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]
+
+    def getRawMatrix(self):
+        return [
             [self.pecas[0][0].value, self.pecas[0][1].value, self.pecas[0][2].value],
             [self.pecas[1][0].value, self.pecas[1][1].value, self.pecas[1][2].value],
             [self.pecas[2][0].value, self.pecas[2][1].value, self.pecas[2][2].value],
         ]
-        print(pecasValue)
+
+    def printPecasValue(self):
+        print(self.getRawMatrix())
         return
 
     def findPecaIndexAndNine(self, index):
