@@ -2,8 +2,9 @@ import flet as ft
 import math
 from componentes import peca
 from utils import instance_manager as im
+from utils.singleton_base import SingletonBase
 
-class Tabuleiro():
+class Tabuleiro(SingletonBase):
 
     def __init__(self, page:ft.Page):
         self.pecas = [
@@ -20,9 +21,23 @@ class Tabuleiro():
             ],
             rows=self.render_pecas(),
             divider_thickness=0,
-            horizontal_lines=ft.BorderSide(width=0),
+            horizontal_lines=ft.BorderSide(width=20, color=ft.colors.BACKGROUND),
+            data_row_max_height=100,
             
         )
+
+    def getCurrentPosition(self)-> list[list[int]]:
+        matrix = self.pecas
+        result = []
+        for i in range(len(matrix)):
+            linha = []
+            for j in range(len(matrix[i])):
+                linha.append(matrix[i][j].value)
+            result.append(linha)
+        
+        return result
+                    
+
     
     def getMovablePecas(self) -> list[peca.Peca]:
 
@@ -48,13 +63,22 @@ class Tabuleiro():
                 if matrix[i][j].value == index:
                     return i, j
     
-    def printPecasValue(self):
-        pecasValue = [
+    def getWinnerPosition(self):
+        return [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]
+
+    def getRawMatrix(self):
+        return [
             [self.pecas[0][0].value, self.pecas[0][1].value, self.pecas[0][2].value],
             [self.pecas[1][0].value, self.pecas[1][1].value, self.pecas[1][2].value],
             [self.pecas[2][0].value, self.pecas[2][1].value, self.pecas[2][2].value],
         ]
-        print(pecasValue)
+
+    def printPecasValue(self):
+        print(self.getRawMatrix())
         return
 
     def findPecaIndexAndNine(self, index):
@@ -134,7 +158,7 @@ class Tabuleiro():
                 [
                     self.data_table
                 ],
-                alignment=ft.MainAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.SPACE_AROUND,
             )
         )
 
