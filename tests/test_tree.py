@@ -11,6 +11,6 @@ tabuleiro_ficticio = [
 # layers: é a quantidade de camadas que a árvore é gerada
 
 # Exemplo de uso:
-# tree = Tree(target=tabuleiro_ficticio, layers=2)
+tree = Tree(target=tabuleiro_ficticio, layers=2)
 
-# tree.root.pre_order()
+tree.root.pre_order()

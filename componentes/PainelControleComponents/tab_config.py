@@ -9,7 +9,7 @@ class TabConfig:
         self.save_button = ft.TextButton(content=ft.Text("Salvar Alterações"), on_click=self.save_changes, disabled=True)
         self.content = ft.Column([
             ft.Text("Configurações", size=25),
-            ft.Text("Refresh Time", size=17),
+            ft.Text("Tempo da Animação", size=17),
             ft.Row([
                 self.slider,
                 self.text_slider,

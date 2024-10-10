@@ -3,12 +3,7 @@ import copy
 from utils.singleton_base import SingletonBase
 
 class MovePredictor(SingletonBase):
-    def __init__(self, tabuleiro_state:list[list[int]]) -> None:
-        self
-        self.state = tabuleiro_state
-
-        
-
+    def __init__(self) -> None:
         self.winner_state = [
             [1, 2, 3],
             [4, 5, 6],

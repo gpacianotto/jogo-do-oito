@@ -5,6 +5,12 @@ Autores: Guilherme de Aguiar Pacianotto, Lucas Bernardo Souza
 
 # Como Rodar
 
+0. Caso queira utilizar `venv`, execute no terminal:
+
+```bash
+source .venv/bin/activate
+```
+
 1. Para rodar esta implementação você precisa primeiro instalar a biblioteca `flet`, utilizada para o desenvolvimento da interface do jogo:
 
 ```bash

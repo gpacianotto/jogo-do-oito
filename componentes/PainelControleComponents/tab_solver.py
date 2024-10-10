@@ -1,5 +1,7 @@
 import flet as ft
 from componentes import tabuleiro
+from utils.heuristica_soma import HeuristicaSoma
+import time
 
 class TabSolver:
     def __init__(self, page:ft.Page, tabuleiro:tabuleiro.Tabuleiro):
@@ -39,11 +41,21 @@ class TabSolver:
     def solve_soma(self):
         self.page.session.set("loading", True)
         self.run_button.disabled = True
+        self.page.update()
+        refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
+        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 1)
 
+        move = heuristica.solve()
+
+        while move != -1:
+            time.sleep(refresh_time)
+            self.tabuleiro.move(move)
+            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 1)
+            move = heuristica.solve()
         
-
         self.run_button.disabled = False
         self.page.session.set("loading", False)
+        self.page.update()
 
     def solve_soma_das_diferencas(self):
         self.page.session.set("loading", True)
@@ -59,6 +71,7 @@ class TabSolver:
 
         if not heuristic:
             print("please, select an heuristic!")
+            return
 
         if heuristic == "Soma":
             self.solve_soma()

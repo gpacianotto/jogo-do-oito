@@ -2,8 +2,9 @@ import flet as ft
 import math
 from componentes import peca
 from utils import instance_manager as im
+from utils.singleton_base import SingletonBase
 
-class Tabuleiro():
+class Tabuleiro(SingletonBase):
 
     def __init__(self, page:ft.Page):
         self.pecas = [
@@ -24,6 +25,19 @@ class Tabuleiro():
             data_row_max_height=100,
             
         )
+
+    def getCurrentPosition(self)-> list[list[int]]:
+        matrix = self.pecas
+        result = []
+        for i in range(len(matrix)):
+            linha = []
+            for j in range(len(matrix[i])):
+                linha.append(matrix[i][j].value)
+            result.append(linha)
+        
+        return result
+                    
+
     
     def getMovablePecas(self) -> list[peca.Peca]:
 
@@ -144,7 +158,7 @@ class Tabuleiro():
                 [
                     self.data_table
                 ],
-                alignment=ft.MainAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.SPACE_AROUND,
             )
         )
 
