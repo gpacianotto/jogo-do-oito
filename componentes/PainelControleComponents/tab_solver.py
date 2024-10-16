@@ -2,12 +2,17 @@ import flet as ft
 from componentes import tabuleiro
 from utils.heuristica_soma import HeuristicaSoma
 import time
+from copy import deepcopy
+
+from utils.move_history import MoveHistory
 
 class TabSolver:
     def __init__(self, page:ft.Page, tabuleiro:tabuleiro.Tabuleiro):
 
         self.page = page
         self.tabuleiro = tabuleiro
+
+        self.movement_counter = ft.Text("QTDE de Movimentos: 0")
 
         self.run_button = ft.IconButton(
             icon=ft.icons.PLAY_ARROW,
@@ -29,7 +34,8 @@ class TabSolver:
             ft.Text("Selecione a Heurística para resolver o jogo", size=17),
             ft.Row([
                 self.select_heuristic,
-                self.run_button
+                self.run_button,
+                self.movement_counter
             ]),
         ], alignment=ft.MainAxisAlignment.SPACE_AROUND)
 
@@ -43,16 +49,27 @@ class TabSolver:
         self.run_button.disabled = True
         self.page.update()
         refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
-        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 1)
+        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 3)
 
         move = heuristica.solve()
+        move_qdte = 0
 
         while move != -1:
             time.sleep(refresh_time)
             self.tabuleiro.move(move)
-            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 1)
+            
+            move_qdte += 1
+            
+            self.movement_counter.value = "QTDE de Movimentos: " + str(move_qdte)
+            self.page.update()
+
+            MoveHistory().registrate(deepcopy(self.tabuleiro.getCurrentPosition()))
+
+            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 3)
             move = heuristica.solve()
         
+        # print("history: ", MoveHistory().history)
+        MoveHistory().clear_history()
         self.run_button.disabled = False
         self.page.session.set("loading", False)
         self.page.update()
