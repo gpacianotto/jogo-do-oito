@@ -9,7 +9,9 @@ class Tree:
         self.layers = layers
         self.root = TreeNode(target, self.processor, layers)
 
-        self.possible_moves = self.root.get_possible_moves()
+        # self.possible_moves = self.root.get_possible_moves()
+
+        
     
     def busca_em_largura(self):
         if self.root.soma == 0:

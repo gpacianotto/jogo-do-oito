@@ -1,5 +1,6 @@
 from utils.move_predictor import MovePredictor
 import copy
+from utils.move_history import MoveHistory
 
 class TreeNode:
     def __init__(self, value:list[list[int]], processor:"MovePredictor",layer:int, parent_move:int=0, parent_moves:list[int]=[]):
@@ -17,15 +18,21 @@ class TreeNode:
             possible_moves = self.get_possible_moves()
 
             for move in possible_moves:
-                # print("value: ",self.value)
-                # print("move: ", move)
-                self.children.append(TreeNode(
-                    value=self.processor.virtual_move(copy.deepcopy(move), copy.deepcopy(self.value)),
-                    processor=processor,
-                    layer=(copy.deepcopy(self.layer) - 1),
-                    parent_move=copy.deepcopy(move),
-                    parent_moves=copy.deepcopy(self.parent_moves)
-                ))
+                
+                virtual_move = self.processor.virtual_move(copy.deepcopy(move), copy.deepcopy(self.value))
+
+                # fazer condição para ver se virtual_move é repetido
+
+                moveHistory = MoveHistory()
+
+                if not moveHistory.state_exists(virtual_move):
+                    self.children.append(TreeNode(
+                        value=virtual_move,
+                        processor=processor,
+                        layer=(copy.deepcopy(self.layer) - 1),
+                        parent_move=copy.deepcopy(move),
+                        parent_moves=copy.deepcopy(self.parent_moves)
+                    ))
             pass
     
     def get_possible_moves(self):
