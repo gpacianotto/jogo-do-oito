@@ -18,6 +18,13 @@ class TabSolver:
             icon=ft.icons.PLAY_ARROW,
             on_click=self.on_click_run
         )
+
+        self.reset_button = ft.IconButton(
+            content=ft.Text("Resetar"),
+            icon=ft.icons.CHANGE_CIRCLE,
+            on_click=self.on_click_reset
+        )
+
         self.drop_down = ft.Dropdown(
             width=200,
             label="Heurística",
@@ -49,7 +56,8 @@ class TabSolver:
             ft.Row([
                 self.select_heuristic,
                 self.run_button,
-                self.movement_counter
+                self.movement_counter,
+                self.reset_button
             ]),
         ], alignment=ft.MainAxisAlignment.SPACE_AROUND)
 
@@ -58,6 +66,12 @@ class TabSolver:
             content=self.content
         )
     
+    def on_click_reset(self, e):
+        MoveHistory().clear_history()
+        self.movement_counter.value = "QTDE de Movimentos: 0"
+        self.page.update()
+        return
+
     def slider_on_change(self, e): 
         self.text_slider.value = f"{int(e.control.value)} camadas"
         self.page.update()
@@ -66,6 +80,8 @@ class TabSolver:
     def solve_soma(self, layers:int):
         self.page.session.set("loading", True)
         self.run_button.disabled = True
+        self.reset_button.disabled = True
+        self.slider.disabled = True
         self.page.update()
         refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
         heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=layers)
@@ -90,6 +106,8 @@ class TabSolver:
         # print("history: ", MoveHistory().history)
         MoveHistory().clear_history()
         self.run_button.disabled = False
+        self.reset_button.disabled = False
+        self.slider.disabled = False
         self.page.session.set("loading", False)
         self.page.update()
 
