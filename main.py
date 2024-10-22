@@ -9,7 +9,8 @@ def main(page: ft.Page):
     page.window.width = 700
     page.window.height = 700
     page.session.set("loading", False)
-    page.session.set("config_refresh_time", 500)
+    page.session.set("config_refresh_time", 10)
+    page.window.maximized = True
 
     tb = tabuleiro.Tabuleiro(page=page)
     pc = painel_controle.PainelControle(page=page, tb=tb)

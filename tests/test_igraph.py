@@ -22,4 +22,4 @@ for edge in E:
 
 labels = v_label
 
-print(labels)
+# print(labels)

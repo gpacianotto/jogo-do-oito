@@ -78,7 +78,7 @@ class Tabuleiro(SingletonBase):
         ]
 
     def printPecasValue(self):
-        print(self.getRawMatrix())
+        # print(self.getRawMatrix())
         return
 
     def findPecaIndexAndNine(self, index):

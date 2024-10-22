@@ -9,7 +9,7 @@ class Tree:
         self.layers = layers
         self.root = TreeNode(target, self.processor, layers)
 
-        # self.possible_moves = self.root.get_possible_moves()
+        self.possible_moves = self.root.get_possible_moves()
 
         
     
@@ -26,7 +26,7 @@ class Tree:
         while queue:
             node = queue.popleft()
 
-            print(node.value," layer ", node.layer, " soma: ", node.soma, " par_mov ", node.parent_moves)
+            # print(node.value," layer ", node.layer, " soma: ", node.soma, " par_mov ", node.parent_moves)
 
             if node.layer == 0:
                 finalNodes.append(node)
