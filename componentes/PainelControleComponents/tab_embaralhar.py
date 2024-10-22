@@ -6,7 +6,7 @@ class TabEmbaralhar:
     def __init__(self, page:ft.Page, tabuleiro:Tabuleiro):
         self.tabuleiro = tabuleiro
         self.page = page
-        self.slider = ft.Slider(value=20, min=10,scale=1.2, max=100, on_change=self.on_change )
+        self.slider = ft.Slider(value=20, min=0,scale=1.2, max=100, on_change=self.on_change )
         self.text_slider = ft.Text(f"{self.slider.value} passos")
         self.button = ft.TextButton(content=ft.Text("Embaralhar"), on_click=self.shuffle)
         self.noRepeatCheckBox = ft.Checkbox(
@@ -52,7 +52,7 @@ class TabEmbaralhar:
                 while peca.value == previous_step:
                     peca = random.choice(pecas)
             
-            print("Step " + str(i) +" - peca taken: " + str(peca.value))
+            # print("Step " + str(i) +" - peca taken: " + str(peca.value))
 
             self.tabuleiro.move(peca.value)
 

@@ -18,16 +18,30 @@ class TabSolver:
             icon=ft.icons.PLAY_ARROW,
             on_click=self.on_click_run
         )
-        self.select_heuristic = ft.Dropdown(
+        self.drop_down = ft.Dropdown(
             width=200,
             label="Heurística",
             hint_text="Escolha a Heurística para resolver o jogo",
             options=[
-                ft.dropdown.Option("Soma"),
-                ft.dropdown.Option("Soma das Diferenças")
+                ft.dropdown.Option("Soma (1 Camada)"),
+                ft.dropdown.Option("Soma (2 Camadas)"),
+                ft.dropdown.Option("Soma (N Camadas)")
             ],
             on_change=self.on_change_select
         )
+        
+        self.slider = ft.Slider(value=3, min=3, max=10, scale=1.2, on_change=self.slider_on_change)
+        self.text_slider = ft.Text(f"{self.slider.value} camadas")
+
+        self.numeric_input = ft.Column([
+            self.slider,
+            self.text_slider
+        ])
+
+
+        self.select_heuristic = ft.Row([
+            self.drop_down
+        ])
 
         self.content = ft.Column([
             ft.Text("Heurísticas", size=25),
@@ -44,12 +58,17 @@ class TabSolver:
             content=self.content
         )
     
-    def solve_soma(self):
+    def slider_on_change(self, e): 
+        self.text_slider.value = f"{int(e.control.value)} camadas"
+        self.page.update()
+        return
+
+    def solve_soma(self, layers:int):
         self.page.session.set("loading", True)
         self.run_button.disabled = True
         self.page.update()
         refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
-        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 3)
+        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=layers)
 
         move = heuristica.solve()
         move_qdte = 0
@@ -65,7 +84,7 @@ class TabSolver:
 
             MoveHistory().registrate(deepcopy(self.tabuleiro.getCurrentPosition()))
 
-            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), 3)
+            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=layers)
             move = heuristica.solve()
         
         # print("history: ", MoveHistory().history)
@@ -84,25 +103,37 @@ class TabSolver:
         self.page.session.set("loading", False)
 
     def on_click_run(self, e):
-        heuristic = self.select_heuristic.value
+        heuristic = self.drop_down.value
 
         if not heuristic:
-            print("please, select an heuristic!")
+            # print("please, select an heuristic!")
             return
 
-        if heuristic == "Soma":
-            self.solve_soma()
+        if heuristic == "Soma (1 Camada)":
+            self.solve_soma(layers=1)
             return
         
-        if heuristic == "Soma das Diferenças":
-            self.solve_soma_das_diferencas()
+        if heuristic == "Soma (2 Camadas)":
+            self.solve_soma(layers=2)
+            return
+        
+        if heuristic == "Soma (N Camadas)":
+            self.solve_soma(layers=int(self.slider.value))
             return
         
         return
 
 
     def on_change_select(self, e):
-        print(self.select_heuristic.value)
+        if(self.drop_down.value == "Soma (N Camadas)"):
+            self.select_heuristic.controls.append(self.numeric_input)
+            self.page.update()
+            return
+        else:
+            self.select_heuristic.controls = [self.drop_down]
+            self.page.update()
+            return
+        # print(self.select_heuristic.value)
 
     def render(self):
         return self.to_be_rendered

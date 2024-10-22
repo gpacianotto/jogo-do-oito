@@ -66,7 +66,7 @@ class TreeNode:
     def pre_order(self, action:callable=do_nothing):
         if self.layer > 0:
             for child in self.children:
-                print(child.value, " camada: ", child.layer, " parent_move: ", child.parent_move, " soma: ", child.soma)
+                # print(child.value, " camada: ", child.layer, " parent_move: ", child.parent_move, " soma: ", child.soma)
                 action()
                 child.pre_order()
                 
