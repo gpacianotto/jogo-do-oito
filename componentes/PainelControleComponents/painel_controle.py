@@ -1,8 +1,6 @@
 import flet as ft
 from componentes import tabuleiro
-from componentes.PainelControleComponents import tab_embaralhar
-from componentes.PainelControleComponents import tab_config
-from componentes.PainelControleComponents import tab_solver
+from componentes.PainelControleComponents import tab_embaralhar, tab_config, tab_solver, tab_insert_position
 class PainelControle:
     def __init__(self, page:ft.Page, tb:tabuleiro.Tabuleiro):
         self.tabuleiro = tb
@@ -11,7 +9,8 @@ class PainelControle:
         self.tabs = {
             "embaralhar": tab_embaralhar.TabEmbaralhar(page=page, tabuleiro=tb),
             "config": tab_config.TabConfig(page=page),
-            "tab_solver": tab_solver.TabSolver(page=page, tabuleiro=tb)
+            "tab_solver": tab_solver.TabSolver(page=page, tabuleiro=tb),
+            "tab_insert_position": tab_insert_position.TabInsertPosition(page=page)
         }
 
         self.to_be_rendered = ft.Tabs(
@@ -21,6 +20,7 @@ class PainelControle:
                 self.tabs.get("embaralhar").render(),
                 self.tabs.get("tab_solver").render(),
                 self.tabs.get("config").render(),
+                self.tabs.get("tab_insert_position").render()
                 
             ],
             expand=1

@@ -13,6 +13,7 @@ class TabSolver:
         self.tabuleiro = tabuleiro
 
         self.movement_counter = ft.Text("QTDE de Movimentos: 0")
+        self.time_marker = ft.Text("Tempo de execução: --:--:--")
 
         self.run_button = ft.IconButton(
             icon=ft.icons.PLAY_ARROW,
@@ -56,7 +57,10 @@ class TabSolver:
             ft.Row([
                 self.select_heuristic,
                 self.run_button,
-                self.movement_counter,
+                ft.Column([
+                    self.movement_counter,
+                    self.time_marker
+                ]),
                 self.reset_button
             ]),
         ], alignment=ft.MainAxisAlignment.SPACE_AROUND)
@@ -69,6 +73,7 @@ class TabSolver:
     def on_click_reset(self, e):
         MoveHistory().clear_history()
         self.movement_counter.value = "QTDE de Movimentos: 0"
+        self.time_marker.value = "Tempo de execução: --:--:--"
         self.page.update()
         return
 
@@ -85,6 +90,8 @@ class TabSolver:
         self.page.update()
         refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
         heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=layers)
+
+        start_time = time.perf_counter()
 
         move = heuristica.solve()
         move_qdte = 0
@@ -105,20 +112,38 @@ class TabSolver:
         
         # print("history: ", MoveHistory().history)
         MoveHistory().clear_history()
+
+        end_time = time.perf_counter()
+
+        elapsed_time = end_time - start_time
+
+        # Converter duração 
+        minutes = int(elapsed_time // 60)
+        seconds = int(elapsed_time % 60)
+        milliseconds = int((elapsed_time % 1) * 1000)
+
+        # Format the output
+        formatted_time = f"{minutes:02}:{seconds:02}:{milliseconds:03}"
+        
+        self.time_marker.value = f"Tempo de execução: {formatted_time}"
+
         self.run_button.disabled = False
         self.reset_button.disabled = False
         self.slider.disabled = False
         self.page.session.set("loading", False)
         self.page.update()
-
-    def solve_soma_das_diferencas(self):
-        self.page.session.set("loading", True)
-        self.run_button.disabled = True
-
-
-
-        self.run_button.disabled = False
-        self.page.session.set("loading", False)
+    
+    # Esse trecho de código foi descartado pois, no livro havia outra heuristica
+    # porém ela não foi pedida nesse trabalho
+    #  
+    # def solve_soma_das_diferencas(self):
+    #     self.page.session.set("loading", True)
+    #     self.run_button.disabled = True
+    #
+    #
+    #
+    #     self.run_button.disabled = False
+    #     self.page.session.set("loading", False)
 
     def on_click_run(self, e):
         heuristic = self.drop_down.value
