@@ -6,25 +6,26 @@ from utils.singleton_base import SingletonBase
 
 class Tabuleiro(SingletonBase):
 
-    def __init__(self, page:ft.Page):
-        self.pecas = [
-            [peca.Peca(1, self.move, page), peca.Peca(2, self.move, page), peca.Peca(3, self.move, page)],
-            [peca.Peca(4, self.move, page), peca.Peca(5, self.move, page), peca.Peca(6, self.move, page)],
-            [peca.Peca(7, self.move, page), peca.Peca(8, self.move, page), peca.Peca(9, self.move, page)],
-        ]
-        self.page = page
-        self.data_table = ft.DataTable(
-            columns=[
-                ft.DataColumn(ft.Text("")),
-                ft.DataColumn(ft.Text("")),
-                ft.DataColumn(ft.Text(""))
-            ],
-            rows=self.render_pecas(),
-            divider_thickness=0,
-            horizontal_lines=ft.BorderSide(width=20, color=ft.colors.BACKGROUND),
-            data_row_max_height=100,
-            
-        )
+    def __init__(self, page:ft.Page=None):
+        if page != None:
+            self.pecas = [
+                [peca.Peca(1, self.move, page), peca.Peca(2, self.move, page), peca.Peca(3, self.move, page)],
+                [peca.Peca(4, self.move, page), peca.Peca(5, self.move, page), peca.Peca(6, self.move, page)],
+                [peca.Peca(7, self.move, page), peca.Peca(8, self.move, page), peca.Peca(9, self.move, page)],
+            ]
+            self.page = page
+            self.data_table = ft.DataTable(
+                columns=[
+                    ft.DataColumn(ft.Text("")),
+                    ft.DataColumn(ft.Text("")),
+                    ft.DataColumn(ft.Text(""))
+                ],
+                rows=self.render_pecas(),
+                divider_thickness=0,
+                horizontal_lines=ft.BorderSide(width=20, color=ft.colors.BACKGROUND),
+                data_row_max_height=100,
+                
+            )
 
     def getCurrentPosition(self)-> list[list[int]]:
         matrix = self.pecas
@@ -37,7 +38,19 @@ class Tabuleiro(SingletonBase):
         
         return result
                     
+    def insertPosition(self, position:list[list[int]]):
+        
+        self.pecas = [
+            [peca.Peca(position[0][0], self.move, self.page), peca.Peca(position[0][1], self.move, self.page), peca.Peca(position[0][2], self.move, self.page)],
+            [peca.Peca(position[1][0], self.move, self.page), peca.Peca(position[1][1], self.move, self.page), peca.Peca(position[1][2], self.move, self.page)],
+            [peca.Peca(position[2][0], self.move, self.page), peca.Peca(position[2][1], self.move, self.page), peca.Peca(position[2][2], self.move, self.page)],
+        ]
 
+        self.data_table.rows = self.render_pecas()
+
+        self.page.update()
+
+        return
     
     def getMovablePecas(self) -> list[peca.Peca]:
 
