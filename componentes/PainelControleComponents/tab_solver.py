@@ -31,6 +31,7 @@ class TabSolver:
             label="Heurística",
             hint_text="Escolha a Heurística para resolver o jogo",
             options=[
+                ft.dropdown.Option("Movimentos Aleatórios"),
                 ft.dropdown.Option("Soma (1 Camada)"),
                 ft.dropdown.Option("Soma (2 Camadas)"),
                 ft.dropdown.Option("Soma (N Camadas)")
@@ -145,6 +146,57 @@ class TabSolver:
     #     self.run_button.disabled = False
     #     self.page.session.set("loading", False)
 
+    def solve_random(self):
+        self.page.session.set("loading", True)
+        self.run_button.disabled = True
+        self.reset_button.disabled = True
+        self.slider.disabled = True
+        self.page.update()
+        refresh_time = int(self.page.session.get("config_refresh_time")) / 1000
+        heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=1)
+
+        start_time = time.perf_counter()
+
+        move = heuristica.solve_random()
+        move_qdte = 0
+
+        while move != -1:
+            time.sleep(refresh_time)
+            self.tabuleiro.move(move)
+            
+            move_qdte += 1
+            
+            self.movement_counter.value = "QTDE de Movimentos: " + str(move_qdte)
+            self.page.update()
+
+            MoveHistory().registrate(deepcopy(self.tabuleiro.getCurrentPosition()))
+
+            heuristica = HeuristicaSoma(self.tabuleiro.getRawMatrix(), layers=1)
+            move = heuristica.solve_random()
+        
+        # print("history: ", MoveHistory().history)
+        MoveHistory().clear_history()
+
+        end_time = time.perf_counter()
+
+        elapsed_time = end_time - start_time
+
+        # Converter duração 
+        minutes = int(elapsed_time // 60)
+        seconds = int(elapsed_time % 60)
+        milliseconds = int((elapsed_time % 1) * 1000)
+
+        # Format the output
+        formatted_time = f"{minutes:02}:{seconds:02}:{milliseconds:03}"
+        
+        self.time_marker.value = f"Tempo de execução: {formatted_time}"
+
+        self.run_button.disabled = False
+        self.reset_button.disabled = False
+        self.slider.disabled = False
+        self.page.session.set("loading", False)
+        self.page.update()
+
     def on_click_run(self, e):
         heuristic = self.drop_down.value
 
@@ -162,6 +214,10 @@ class TabSolver:
         
         if heuristic == "Soma (N Camadas)":
             self.solve_soma(layers=int(self.slider.value))
+            return
+        
+        if heuristic == "Movimentos Aleatórios":
+            self.solve_random()
             return
         
         return

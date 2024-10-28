@@ -24,3 +24,10 @@ class HeuristicaSoma():
             return random.choice(possible_moves)
         except:
             return -1
+        
+    def solve_random(self):
+        if self.move_predictor.winner_state == self.tabuleiro_state:
+            return -1
+        possible_moves = self.move_predictor.getMovablePecas(deepcopy(self.tabuleiro_state))
+
+        return random.choice(possible_moves)
